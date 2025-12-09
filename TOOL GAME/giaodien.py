@@ -9,11 +9,8 @@ from tkinter import scrolledtext
 from tkinter import ttk
 from datetime import datetime
 
-# ========= BỔ SUNG: THƯ VIỆN HOTKEY =========
 import keyboard
-# ============================================
-
-# ========== ĐƯỜNG DẪN ẢNH ==========    
+  
 BASE = os.path.join(os.getcwd(), "IMG")
 
 def load(name):
@@ -23,7 +20,6 @@ def load(name):
         return None
     return cv2.imread(path, 0)
 
-# Template
 img_dua_hau = load("mua_dua_hau.png")
 img_bi_ngo = load("mua_bi_ngo.png")
 img_plus = load("plus.png")
@@ -43,7 +39,7 @@ emergency_stop = False
 count_dua = 0
 count_bi = 0
 
-# ====== LOG HIỂN THỊ ======
+
 log_box = scrolledtext.ScrolledText(root, width=80, height=20, bg="#111", fg="white", font=("Consolas", 10))
 log_box.pack(pady=10)
 
@@ -58,7 +54,6 @@ def log(text, type="info"):
     log_box.tag_config(type, foreground=log_colors.get(type, "white"))
     log_box.see(tk.END)
 
-# ====== NÚT ON / OFF / STOP ======
 def start_bot():
     global running, emergency_stop
     running = True
@@ -84,14 +79,14 @@ tk.Button(top_frame, text="ON", width=12, bg="#28A745", fg="white", font=("Arial
 tk.Button(top_frame, text="OFF", width=12, bg="#FFC107", fg="black", font=("Arial", 12, "bold"), command=stop_bot).grid(row=0, column=1, padx=10)
 tk.Button(top_frame, text="STOP NGAY!", width=12, bg="#DC3545", fg="white", font=("Arial", 12, "bold"), command=panic_stop).grid(row=0, column=2, padx=10)
 
-# ====== ĐẾM ======
+
 count_label = tk.Label(root, text="Dưa hấu: 0    |    Bí ngô: 0", fg="cyan", bg="#1F1F1F", font=("Consolas", 14))
 count_label.pack(pady=5)
 
 def update_count():
     count_label.config(text=f"Dưa hấu: {count_dua}    |    Bí ngô: {count_bi}")
 
-# ========== CLICK TEMPLATE ==========
+
 def click_if_found(template, threshold=0.72, delay=0.1):
     if template is None:
         return False
@@ -111,7 +106,6 @@ def click_if_found(template, threshold=0.72, delay=0.1):
 
     return False
 
-# ========== BOT LOOP ==========
 def bot_loop():
     global running, emergency_stop, count_dua, count_bi
     last_switch = 0
@@ -121,8 +115,7 @@ def bot_loop():
 
     while running and not emergency_stop:
         now = time.time()
-
-        # ======= 1. MUA =======
+        
         if click_if_found(img_dua_hau):
             count_dua += 1
             update_count()
@@ -135,7 +128,6 @@ def bot_loop():
             log("🛒 Mua bí ngô!", "success")
             continue
 
-        # ======= 2. THANH TOÁN =======
         if click_if_found(img_plus):
             log("➕ Bấm +", "info")
             continue
@@ -144,7 +136,6 @@ def bot_loop():
             log("💳 Thanh toán!", "success")
             continue
 
-        # ======= 3. CHUYỂN TAB 10S =======
         if now - last_switch >= 10:
             if current_tab == "dua":
                 if click_if_found(img_hat_bi_ngo):
@@ -161,7 +152,7 @@ def bot_loop():
 
     log("⛔ BOT ĐÃ DỪNG!", "warn")
 
-# ====== ĐỒNG HỒ REAL TIME ======
+
 clock_label = tk.Label(root, text="", fg="white", bg="#1F1F1F", font=("Consolas", 12))
 clock_label.pack()
 
@@ -172,7 +163,6 @@ def update_clock():
 
 update_clock()
 
-# ====== FOOTER ======
 footer = tk.Label(root, text="Tool được viết bởi Alex Nguyen", fg="#888", bg="#1F1F1F", font=("Arial", 10))
 footer.pack(pady=10)
 
@@ -195,6 +185,6 @@ def hotkey_listener():
             time.sleep(0.3)
 
 threading.Thread(target=hotkey_listener, daemon=True).start()
-# ============================================================
 
 root.mainloop()
+
